@@ -12,3 +12,9 @@ instead of a standard Elm-Test runner (the classes in the HTML are used to extra
 ```
 elm-test-runner path_to_elm_test_script.elm
 ```
+
+e.g.
+
+```
+elm-test-runner js/TestSuite.elm
+```

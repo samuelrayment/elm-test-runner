@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/samuelrayment/elm-test-runner",
   "devDependencies": {
+    "consoleplusplus": "^1.3.0",
     "lodash": "^3.10.0",
     "minimist": "^1.1.1",
     "phantomjs": "^1.9.17",
