@@ -14,12 +14,12 @@ var temp = require('temp')
 
 var elmMakePath;
 try {
+    // try to find elm-make in the env var
+    elmMakePath = process.env['ELM-MAKE-PATH'];
+} catch (e) {
     // use elm node module
     var elm = require('elm');
     elmMakePath = elm['elm-make'];
-} catch (e) {
-    // fallback to env var
-    elmMakePath = process.env['ELM-MAKE-PATH'];
 }
 
 
