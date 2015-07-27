@@ -9,26 +9,21 @@ console.disableTimestamp();
 console.disableLevelMsg();
 
 function waitFor(testFx, onReady, timeOutMillis) {
-    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 3001, //< Default Max Timout is 3s
+    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 3001,
         start = new Date().getTime(),
         condition = false,
         interval = setInterval(function() {
             if ( (new Date().getTime() - start < maxtimeOutMillis) && !condition ) {
-                // If not time-out yet and condition not yet fulfilled
                 condition = (typeof(testFx) === "string" ? eval(testFx) : testFx()); //< defensive code
             } else {
                 if(!condition) {
-                    // If condition still not fulfilled (timeout but condition is 'false')
-                    //console.log("'waitFor()' timeout");
                     phantom.exit(1);
                 } else {
-                    // Condition fulfilled (timeout and/or condition is 'true')
-                    //console.log("'waitFor()' finished in " + (new Date().getTime() - start) + "ms.");
-                    typeof(onReady) === "string" ? eval(onReady) : onReady(); //< Do what it's supposed to do once the condition is fulfilled
-                    clearInterval(interval); //< Stop this interval
+                    typeof(onReady) === "string" ? eval(onReady) : onReady();
+                    clearInterval(interval);
                 }
             }
-        }, 100); //< repeat check every 250ms
+        }, 100);
 };
 
 
@@ -38,7 +33,7 @@ function parseResults() {
 
         var reports = element.querySelectorAll('div.report');
         var reportsList = [];
-        console.log(topLevelReports.length);
+        outputToConsole(topLevelReports.length);
         for (var i=0; i<reports.length; i++) {
             var report = reports[i];
             reportsList.push(parseResult(report));        
@@ -82,13 +77,20 @@ function parseResults() {
     }
 }
 
+function outputToConsole(message, indent) {
+    if (indent == undefined) {
+	indent = 0;
+    }
+    console.debug(_.padLeft('', indent) + message);
+}
+
 function printResults(output) {
     var spaceOut = function(indent) {
         return _.padLeft('', indent);
     }
     
     var printReport = function(report, indent) {
-        console.log(spaceOut(indent) + 'Suite: ' + report.name);
+	outputToConsole('Suite: ' + report.name, indent);
 
         var reports = report.reports;
         for (var i=0; i<reports.length; i++) {
@@ -98,15 +100,17 @@ function printResults(output) {
         var tests = report.tests;
         for (var i=0; i<tests.length; i++) {
             var test = tests[i];
+	    var messageColour;
             if (test.pass) {
-                console.debug(spaceOut(indent + 1) + 'Test: #green{'+test.message+'}');
+		messageColour = 'green';
             } else {
-                console.debug(spaceOut(indent + 1) + 'Test: #red{'+test.message+'}');
+		messageColour = 'red';
             }
+	    outputToConsole('Test: #' + messageColour + '{' + test.message + '}', indent + 1);
         }
     }
     
-    console.log(output.status);
+    outputToConsole(output.status);
     for (var i=0; i<output.reports.length; i++) {
         var report = output.reports[i];
         printReport(report, 0);
@@ -124,7 +128,7 @@ var url = 'file://' + system.args[1];
 
 page.open(url, function(status){
     if (status !== "success") {
-        console.debug("#red{Can't load file}");
+        outputToConsole("#red{Can't load file}");
         phantom.exit(1);
     } else {
 	waitFor(function() {
