@@ -1,9 +1,16 @@
+/**
+ * Elm Test Runner Module
+ * 
+ * Support module for the elm test runner, compiles the elm test code to js
+ * then triggers the phantomjs run.
+**/
+
 var path = require('path')
 var childProcess = require('child_process')
 var phantomjs = require('phantomjs')
 var binPath = phantomjs.path
 var temp = require('temp')
-var argv = require('minimist')(process.argv.slice(2));
+
 
 var elmMakePath;
 try {
@@ -46,9 +53,9 @@ function runPhantomTests(binPath, tempName) {
 }
 
 
-exports.run = function() {
+exports.run = function(path) {
     var tempName = temp.path({suffix: '.html'});
     
-    compileElmTests(elmMakePath, argv['_'][0], tempName);
+    compileElmTests(elmMakePath, path, tempName);
     runPhantomTests(binPath, tempName);
 }
